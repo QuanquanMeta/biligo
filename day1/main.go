@@ -19,7 +19,7 @@ func main() {
 	// n, _ := chineseCount()
 	// fmt.Println(n)
 
-	myFor()
+	myArray()
 }
 
 // int
@@ -33,7 +33,7 @@ func myInteger() (i int, e error) {
 	i2 := 077
 	fmt.Printf("%d\n", i2)
 
-	i3 := 0x1234567
+	i3 := "0x123456"
 	fmt.Printf("%d\n", i3)
 
 	fmt.Printf("%T\n", i3)
@@ -219,5 +219,26 @@ func myOperator() {
 
 func myArray() {
 	var a1 [3]bool
-	fmt.Println("%T", a1)
+	fmt.Printf("%T", a1)
+	fmt.Println(a1)
+
+	// init
+	a10 := [...]int{0, 1}
+	fmt.Println(a10)
+
+	// index init
+	a3 := [5]int{0: 1, 4: 2}
+	fmt.Println(a3)
+
+	for i, v := range a3 {
+		fmt.Println(i, v)
+	}
+
+	// multiple array
+	a11 := [3][2]int{
+		[2]int{1, 2},
+		[2]int{3, 4},
+		[2]int{5, 6},
+	}
+	fmt.Println(a11)
 }
