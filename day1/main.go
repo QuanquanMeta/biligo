@@ -14,10 +14,12 @@ func main() {
 	// myFloat()
 	// myFmt()
 	// myString()
-	myFor()
+	// myFor()
 
-	n, _ := chineseCount()
-	fmt.Println(n)
+	// n, _ := chineseCount()
+	// fmt.Println(n)
+
+	myFor()
 }
 
 // int
@@ -110,7 +112,7 @@ func myString() {
 }
 
 // byte and rune
-func myFor() {
+func myrune() {
 	s := "abcdefghijklmnopqrstuvwxyz"
 
 	for i := range s { //byte
@@ -146,4 +148,76 @@ func chineseCount() (n int, e error) {
 		}
 	}
 	return n, e
+}
+
+// if
+
+func myIf() {
+	if age := 19; age > 18 {
+		fmt.Println("adult")
+	} else if age > 35 {
+		fmt.Println("midage")
+	} else {
+		fmt.Println("go back home do homework")
+	}
+}
+
+func myFor() {
+	// for
+	for i := 0; i < 10; i++ {
+		fmt.Println(i)
+		if i == 5 {
+			break
+		}
+	}
+
+	// for range
+	s := "hello"
+
+	for i, v := range s {
+		fmt.Printf("%d, %c\n", i, v)
+	}
+}
+
+// switch
+func mySwitch() {
+	// switch
+	switch n := 5; n {
+	case 1, 2:
+		fmt.Println(1)
+		fmt.Println(2)
+	case 3:
+		fmt.Println(3)
+	case 4:
+		fmt.Println(4)
+	case 5:
+		fmt.Println(5)
+	default:
+		fmt.Println(n)
+	}
+}
+
+func myOperator() {
+
+	var (
+		a = 1
+		b = 2
+	)
+
+	fmt.Println(a + b)
+
+	// unary operator
+	// &
+	fmt.Println(5 & 2)
+	// |
+	fmt.Println(5 | 2)
+	// ^ if different to be
+	fmt.Println(5 ^ 2)
+
+	fmt.Println(1 << 10)
+}
+
+func myArray() {
+	var a1 [3]bool
+	fmt.Println("%T", a1)
 }
