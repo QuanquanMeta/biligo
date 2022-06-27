@@ -51,7 +51,7 @@ func myInteger() (i int, e error) {
 	fmt.Printf("%d\n", i2)
 
 	i3 := "0x123456"
-	fmt.Printf("%d\n", i3)
+	fmt.Printf("%s\n", i3)
 
 	fmt.Printf("%T\n", i3)
 
@@ -591,8 +591,8 @@ func myConstructor() {
 // Method and receiver
 // Method is a func applying to a special type
 type dog struct {
-	Name string `json:"name",db:"name",ini:"name"`
-	Age  int    `json:"age",db:"age",ini:"age"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
 }
 
 // dog ctor
@@ -669,3 +669,5 @@ func myJson() {
 	json.Unmarshal([]byte(str), &d2) // pass reference
 	fmt.Printf("%#v\n", d2)
 }
+
+// gp pkg
