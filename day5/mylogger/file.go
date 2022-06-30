@@ -160,3 +160,7 @@ func (f *FileLogger) splitFile(file *os.File) (*os.File, error) {
 
 	return fileObj, err
 }
+
+func (f *FileLogger) checkHour(file *os.File) bool {
+	return true
+}

@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-type any = interface{}
-
 // ConsoleLogger log struct
 type ConsoleLogger struct {
 	Level LogLevel

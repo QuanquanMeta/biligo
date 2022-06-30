@@ -8,8 +8,20 @@ import (
 	"strings"
 )
 
+// empty interface{}
+type any = interface{}
+
 // Severity
 type LogLevel uint16
+
+type Logger interface {
+	Debug(format string, a ...any)
+	Info(format string, a ...any)
+	Warning(format string, a ...any)
+	Error(format string, a ...any)
+	Fatal(format string, a ...any)
+	log(lv, format string, a ...any)
+}
 
 const (
 	INVALID LogLevel = 1 << iota // 1 << 0 which is 00000000 00000001
