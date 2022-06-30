@@ -55,7 +55,7 @@ func loadIni(fileName string, data any) (err error) {
 		line = strings.TrimSpace(line)
 		// 	2.1 if a comment, ignore
 		if strings.HasPrefix(line, "#") || strings.HasPrefix(line, ";") {
-			fmt.Printf("this is a comment: %s", line)
+			fmt.Printf("This is a comment: [%s]", line)
 			continue
 		} else if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
 			// 	2.2 if [] it's a section
@@ -67,7 +67,7 @@ func loadIni(fileName string, data any) (err error) {
 				if sectionName == field.Tag.Get("ini") {
 					// found the section name. recoded the name
 					structName = field.Name
-					fmt.Printf("found %s struct name %s\n", sectionName, structName)
+					fmt.Printf("found [%s] struct name %s\n", sectionName, structName)
 				}
 
 			}
@@ -136,13 +136,14 @@ func loadIni(fileName string, data any) (err error) {
 }
 
 func main() {
-	var mc Config
-	err := loadIni("./conf.ini", &mc)
+	var cfg Config
+	err := loadIni("./conf.ini", &cfg)
 	if err != nil {
 		fmt.Printf("loadini failed, err:%v", err)
 		return
 	}
-	fmt.Println(mc.MysqlConfig.Address, mc.MysqlConfig.Port, mc.MysqlConfig.Username, mc.MysqlConfig.Password)
-	fmt.Println(mc.RedisConfig.Host, mc.RedisConfig.Prot, mc.RedisConfig.Password, mc.RedisConfig.Database)
+	// fmt.Println(cfg.MysqlConfig.Address, cfg.MysqlConfig.Port, cfg.MysqlConfig.Username, cfg.MysqlConfig.Password)
+	// fmt.Println(cfg.RedisConfig.Host, cfg.RedisConfig.Prot, cfg.RedisConfig.Password, cfg.RedisConfig.Database)
+	fmt.Printf("%#v\n", cfg)
 
 }
