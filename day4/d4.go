@@ -169,11 +169,11 @@ func myCloseChan() {
 
 // oneway chan
 // normally used with parameter to restric send only or receive only
-func mySendOnlyChan(ch1 chan<- int) { // send-only
+func mySendOnlyChan(ch1 chan<- int) { // send-only, write only
 	ch1 <- 10
 }
 
-func myReceivenlyChan(ch2 <-chan int) { // receive-only
+func myReceivenlyChan(ch2 <-chan int) { // receive-only, read only
 	x, ok := <-ch2
 	fmt.Println(x, ok)
 }

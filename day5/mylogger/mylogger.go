@@ -14,6 +14,25 @@ type any = interface{}
 // Severity
 type LogLevel uint16
 
+type LogType uint8
+
+const (
+	ConsoleLoggerType LogType = iota
+	FileLoggerType
+)
+
+func NewLogger(lt LogType) Logger {
+
+	switch lt {
+	case ConsoleLoggerType:
+		return NewConsoleLogger(DEBUG | WARNING | ERROR | FATAL)
+	case FileLoggerType:
+		return NewFileLogger(DEBUG|WARNING|ERROR|FATAL, "./log", "d5.log", 4*1024)
+	default:
+		return nil
+	}
+}
+
 type Logger interface {
 	Debug(format string, a ...any)
 	Info(format string, a ...any)
@@ -49,8 +68,28 @@ func parseStrtoLogLevel(s string) (LogLevel, error) {
 	case "fatal":
 		return FATAL, nil
 	default:
-		err := errors.New("invalid log level")
+		err := errors.New("invalid string")
 		return INVALID, err
+	}
+}
+
+func parseLogLevelToString(lv LogLevel) (s string, err error) {
+	switch lv {
+	case TRACE:
+		return "TRACE", nil
+	case DEBUG:
+		return "DEBUG", nil
+	case INFO:
+		return "INFO", nil
+	case WARNING:
+		return "WARNING", nil
+	case ERROR:
+		return "ERROR", nil
+	case FATAL:
+		return "FATAL", nil
+	default:
+		err = errors.New("invalid LogLevel")
+		return
 	}
 }
 

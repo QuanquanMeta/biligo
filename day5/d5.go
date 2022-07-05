@@ -6,25 +6,6 @@ import (
 	"github.com/biligo/day5/mylogger"
 )
 
-type LogType uint8
-
-const (
-	ConsoleLoggerType LogType = iota
-	FileLoggerType
-)
-
-func NewLogger(lt LogType) mylogger.Logger {
-
-	switch lt {
-	case ConsoleLoggerType:
-		return mylogger.NewConsoleLogger(mylogger.DEBUG | mylogger.WARNING | mylogger.ERROR | mylogger.FATAL)
-	case FileLoggerType:
-		return mylogger.NewFileLogger(mylogger.DEBUG|mylogger.WARNING|mylogger.ERROR|mylogger.FATAL, "./", "d5.log", 4*1024)
-	default:
-		return nil
-	}
-}
-
 func main() {
 	//myConsoleLogger()
 	myLogger()
@@ -55,8 +36,8 @@ var log mylogger.Logger
 // }
 
 func myLogger() {
-	log = NewLogger(ConsoleLoggerType)
-	log = NewLogger(FileLoggerType)
+	log = mylogger.NewLogger(mylogger.ConsoleLoggerType)
+	log = mylogger.NewLogger(mylogger.FileLoggerType)
 
 	for i := 0; i < 100; i++ {
 		log.Debug("this is debug")
