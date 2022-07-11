@@ -1,4 +1,4 @@
-package main
+package taillog
 
 import (
 	"fmt"
@@ -7,7 +7,32 @@ import (
 	"github.com/hpcloud/tail"
 )
 
-func main() {
+var (
+	tailObj *tail.Tail
+)
+
+func Init(fileName string) (err error) {
+	config := tail.Config{
+		ReOpen:    true,
+		Follow:    true,
+		Location:  &tail.SeekInfo{Offset: 0, Whence: 2},
+		MustExist: false,
+		Poll:      true,
+	}
+
+	tailObj, err = tail.TailFile(fileName, config)
+	if err != nil {
+		fmt.Printf("tail file failed, err:%v\n", err)
+		return
+	}
+	return
+}
+
+func ReadChan() <-chan *tail.Line {
+	return tailObj.Lines
+}
+
+func testTail() {
 	fileName := "./my.log"
 	config := tail.Config{
 		ReOpen:    true,
@@ -37,5 +62,8 @@ func main() {
 		}
 		fmt.Println("line:", line.Text)
 	}
+
+}
+func main() {
 
 }
