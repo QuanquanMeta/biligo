@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/biligo/logagent/kafka"
 	"github.com/hpcloud/tail"
 )
 
@@ -11,7 +12,23 @@ var (
 	tailObj *tail.Tail
 )
 
-func Init(fileName string) (err error) {
+// TailTask is a log collecter
+type TailTask struct {
+	path     string
+	topic    string
+	instance *tail.Tail
+}
+
+func NewTailTask(path, topic string) (tailObj *TailTask) {
+	tailObj = &TailTask{
+		path:  path,
+		topic: topic,
+	}
+	tailObj.init() // init task
+	return
+}
+
+func (t *TailTask) init() {
 	config := tail.Config{
 		ReOpen:    true,
 		Follow:    true,
@@ -20,16 +37,33 @@ func Init(fileName string) (err error) {
 		Poll:      true,
 	}
 
-	tailObj, err = tail.TailFile(fileName, config)
+	var err error
+	t.instance, err = tail.TailFile(t.path, config)
 	if err != nil {
 		fmt.Printf("tail file failed, err:%v\n", err)
-		return
+
 	}
-	return
+	go t.run() //send to log to agent
 }
 
-func ReadChan() <-chan *tail.Line {
-	return tailObj.Lines
+// func ReadChan() <-chan *tail.Line {
+// 	return tailObj.Lines
+// }
+
+func (t *TailTask) ReadChan() <-chan *tail.Line {
+	return t.instance.Lines
+}
+
+func (t *TailTask) run() {
+	for {
+		select {
+		case line := <-t.instance.Lines: // get line of logs from tailObj
+			// 32. it to Kafka
+			kafka.SendToChan(t.topic, line.Text) // function call funct. good to set it async
+			// send log to a chan
+			// use single treahd obj
+		}
+	}
 }
 
 func testTail() {
@@ -64,6 +98,7 @@ func testTail() {
 	}
 
 }
+
 func main() {
 
 }

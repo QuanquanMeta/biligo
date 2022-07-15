@@ -2,15 +2,22 @@ package kafka
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Shopify/sarama"
 )
 
+type logData struct {
+	topic string
+	data  string
+}
+
 var (
-	client sarama.SyncProducer // declare a glabal kafka producer client
+	client      sarama.SyncProducer // declare a glabal kafka producer client
+	logDataChan chan *logData
 )
 
-func Init(addrs []string) (err error) {
+func Init(addrs []string, maxSize int) (err error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll          // 发送完数据需要leader和follow都确认
 	config.Producer.Partitioner = sarama.NewRandomPartitioner // 新选出一个partition
@@ -22,7 +29,42 @@ func Init(addrs []string) (err error) {
 		fmt.Println("producer closed, err:", err)
 		return
 	}
+
+	// init chan
+	logDataChan = make(chan *logData, maxSize)
+	// start a goroutine getting data from chan and send it to kafka
+	go sendchanToKafka()
 	return
+}
+
+// function interface to send data to a channel
+func SendToChan(topic, data string) {
+	msg := &logData{
+		topic: topic,
+		data:  data,
+	}
+	logDataChan <- msg
+}
+
+// send dta to kafka
+func sendchanToKafka() {
+	for {
+		select {
+		case ld := <-logDataChan:
+			msg := &sarama.ProducerMessage{}
+			msg.Topic = ld.topic
+			msg.Value = sarama.StringEncoder(ld.data)
+			pid, offset, err := client.SendMessage(msg)
+			if err != nil {
+				fmt.Println("send msg failed, err:", err)
+				return
+			}
+			fmt.Printf("pid:%v offset:%v\n", pid, offset)
+		default:
+			time.Sleep(time.Millisecond * 50)
+		}
+	}
+
 }
 
 func SendToKafka(topic, data string) {
