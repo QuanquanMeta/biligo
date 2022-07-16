@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/biligo/logagent/utils"
+
 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
@@ -29,8 +31,15 @@ func etcdPut() {
 
 	timeout := time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	jsonValue := `[{"path":"c:/tmp/nginx.log", "topic":"web_log"},{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/yyy/mysql.log", "topic":"mysql_log"}]`
-	_, err = cli.Put(ctx, "/logagent/collect_config", jsonValue)
+	// jsonValue := `[{"path":"d:/xxx/nginx.log", "topic":"web_log"},{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
+	jsonValue := `[{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
+	//jsonValue := `[{"path":"d:/xxx/redis.log", "topic":"redis_log"}]`
+	ipStr, err := utils.GetOutboundIP()
+	if err != nil {
+		panic(err)
+	}
+	etcdconfkey := fmt.Sprintf("/logagent/%s/collect_config", ipStr)
+	_, err = cli.Put(ctx, etcdconfkey, jsonValue)
 	cancel()
 	if err != nil {
 		switch err {

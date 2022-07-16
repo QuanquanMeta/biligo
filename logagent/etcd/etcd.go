@@ -64,3 +64,30 @@ func GetConf(key string) (logEntries []*LogEntry, err error) {
 	}
 	return
 }
+
+// etcd watch func
+func WatchConf(key string, newConfch chan<- []*LogEntry) {
+	ch := cli.Watch(context.Background(), key)
+
+	// get vlue from ch, which is watiching key
+	for wresp := range ch {
+		for _, evt := range wresp.Events {
+			fmt.Printf("Type:%v Key:%v, Value:%v\n", evt.Type, string(evt.Kv.Key), string(evt.Kv.Value))
+			// notify taillog.tskmgr
+			// 1. decide type first
+			var newConf []*LogEntry
+			if evt.Type != clientv3.EventTypeDelete {
+				// not delete
+				err := json.Unmarshal(evt.Kv.Value, &newConf)
+				if err != nil {
+					fmt.Printf("unmarshal failed, err:%v\n", err)
+					continue
+				}
+			}
+
+			fmt.Printf("Get new conf!:%v\n", newConf)
+
+			newConfch <- newConf
+		}
+	}
+}

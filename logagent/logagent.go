@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/biligo/logagent/conf"
 	"github.com/biligo/logagent/etcd"
 	"github.com/biligo/logagent/kafka"
 	"github.com/biligo/logagent/taillog"
+	"github.com/biligo/logagent/utils"
 
 	"gopkg.in/ini.v1"
 )
@@ -58,8 +60,14 @@ func main() {
 	}
 	fmt.Println("init etcd succeed")
 
+	// in order to get ip for each logagent
+	ipStr, err := utils.GetOutboundIP()
+	if err != nil {
+		panic(err)
+	}
+	etcdconfkey := fmt.Sprintf(cfg.EtcdConf.Key, ipStr)
 	// 2.1 get log info from etcd
-	logEntryConf, err := etcd.GetConf(cfg.EtcdConf.Key)
+	logEntryConf, err := etcd.GetConf(etcdconfkey)
 	if err != nil {
 		fmt.Printf("GetConf failed, err:%v\n", err)
 		return
@@ -71,11 +79,14 @@ func main() {
 	}
 
 	// 2.2 send a watcher to monitor the changes from etcd and notify the logagent
-
-	// 3 collect the logs
 	taillog.InitMgr(logEntryConf)
+	newConfChan := taillog.NewConf()
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go etcd.WatchConf(etcdconfkey, newConfChan)
+	wg.Wait()
+	// 3 collect the logs
 
-	// // 2. open log to collect log
 	// err = taillog.Init(cfg.TaillogConf.FileName)
 	// if err != nil {
 	// 	fmt.Printf("taillog init failed, err:%v\n", err)

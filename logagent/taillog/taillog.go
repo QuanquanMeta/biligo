@@ -1,6 +1,7 @@
 package taillog
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -17,12 +18,18 @@ type TailTask struct {
 	path     string
 	topic    string
 	instance *tail.Tail
+	// for exisiting t.run
+	ctx        context.Context
+	cancelFunc context.CancelFunc
 }
 
 func NewTailTask(path, topic string) (tailObj *TailTask) {
+	ctx, cancle := context.WithCancel(context.Background())
 	tailObj = &TailTask{
-		path:  path,
-		topic: topic,
+		path:       path,
+		topic:      topic,
+		ctx:        ctx,
+		cancelFunc: cancle,
 	}
 	tailObj.init() // init task
 	return
@@ -57,11 +64,17 @@ func (t *TailTask) ReadChan() <-chan *tail.Line {
 func (t *TailTask) run() {
 	for {
 		select {
+		case <-t.ctx.Done():
+			fmt.Printf("tail task:%s_%s exit...", t.path, t.topic)
+			return
 		case line := <-t.instance.Lines: // get line of logs from tailObj
 			// 32. it to Kafka
+			fmt.Printf("got log data form %s successful, log:%v\n", t.path, t.topic)
 			kafka.SendToChan(t.topic, line.Text) // function call funct. good to set it async
 			// send log to a chan
 			// use single treahd obj
+		default:
+			time.Sleep(time.Microsecond * 300)
 		}
 	}
 }
