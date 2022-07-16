@@ -5,7 +5,7 @@ type AppConf struct {
 	//TaillogConf `ini:"taillog"`
 	EtcdConf `ini:"etcd"`
 
-	ES `ini:"es"`
+	ESConf `ini:"es"`
 }
 
 type KafkaConf struct {
@@ -25,6 +25,8 @@ type TaillogConf struct {
 	FileName string `ini:"filename"`
 }
 
-type ES struct {
-	Address string `ini:"address"`
+type ESConf struct {
+	Address      string `ini:"address"`
+	ChanSize     int    `ini:"chansize"`
+	NumsGorutine int    `ini:"numsGorutine"`
 }

@@ -8,14 +8,14 @@ import (
 	"github.com/biligo/logtransfer/es"
 )
 
-type logData struct {
-	topic string
-	data  string
+type LogData struct {
+	Topic string `json:"topic"`
+	Data  string `json:"data"`
 }
 
 var (
 	client      sarama.SyncProducer // declare a glabal kafka producer client
-	logDataChan chan *logData
+	logDataChan chan *LogData
 )
 
 func Init(addrs []string, maxSize int) (err error) {
@@ -32,7 +32,7 @@ func Init(addrs []string, maxSize int) (err error) {
 	}
 
 	// init chan
-	logDataChan = make(chan *logData, maxSize)
+	logDataChan = make(chan *LogData, maxSize)
 	// start a goroutine getting data from chan and send it to kafka
 	go sendchanToKafka()
 	return
@@ -40,9 +40,9 @@ func Init(addrs []string, maxSize int) (err error) {
 
 // function interface to send data to a channel
 func SendToChan(topic, data string) {
-	msg := &logData{
-		topic: topic,
-		data:  data,
+	msg := &LogData{
+		Topic: topic,
+		Data:  data,
 	}
 	logDataChan <- msg
 }
@@ -53,8 +53,8 @@ func sendchanToKafka() {
 		select {
 		case ld := <-logDataChan:
 			msg := &sarama.ProducerMessage{}
-			msg.Topic = ld.topic
-			msg.Value = sarama.StringEncoder(ld.data)
+			msg.Topic = ld.Topic
+			msg.Value = sarama.StringEncoder(ld.Data)
 			pid, offset, err := client.SendMessage(msg)
 			if err != nil {
 				fmt.Println("send msg failed, err:", err)
@@ -109,10 +109,6 @@ func clientTest() {
 	fmt.Printf("pid:%v offset:%v\n", pid, offset)
 }
 
-type LogData struct {
-	Data string `json:"data"`
-}
-
 // kafka consumer
 
 func InitConsumer(addrs []string, topic string) (err error) {
@@ -141,14 +137,16 @@ func InitConsumer(addrs []string, topic string) (err error) {
 				fmt.Printf("Partition:%d Offset:%d Key:%v Value:%v\n", msg.Partition, msg.Offset, msg.Key, string(msg.Value))
 				// ld := new(LogData)
 				// err = json.Unmarshal(msg.Value, ld)
-				ld := LogData{
-					Data: string(msg.Value),
+				ld := es.EsLogData{
+					Topic: topic,
+					Data:  string(msg.Value),
 				}
 				if err != nil {
 					fmt.Printf("sUnmarshal failed, err:%v\n", err)
 					continue
 				}
-				es.Send(topic, &ld)
+				es.SendToESChan(&ld)
+				// optimize: put the data to chan
 			}
 		}(pc)
 	}

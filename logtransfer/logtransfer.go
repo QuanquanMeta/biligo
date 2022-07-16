@@ -21,10 +21,10 @@ func main() {
 		fmt.Printf("ini config, err:%v\n", err)
 	}
 
-	fmt.Printf("cfg:%v\n", cfg.ES.Address)
+	fmt.Printf("cfg:%v\n", cfg.ESConf.Address)
 
 	// 1. send log to ES
-	err = es.InitES(cfg.ES.Address)
+	err = es.InitES(cfg.ESConf.Address, cfg.ESConf.ChanSize, cfg.ESConf.NumsGorutine)
 	if err != nil {
 		fmt.Printf("init es client failed, err:%v\n", err)
 		return
