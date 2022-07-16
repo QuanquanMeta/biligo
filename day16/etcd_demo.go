@@ -31,8 +31,8 @@ func etcdPut() {
 
 	timeout := time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	// jsonValue := `[{"path":"d:/xxx/nginx.log", "topic":"web_log"},{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
-	jsonValue := `[{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
+	jsonValue := `[{"path":"d:/xxx/nginx.log", "topic":"web_log"},{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
+	//jsonValue := `[{"path":"d:/xxx/redis.log", "topic":"redis_log"},{"path":"d:/xxx/mysql.log", "topic":"mysql_log"}]`
 	//jsonValue := `[{"path":"d:/xxx/redis.log", "topic":"redis_log"}]`
 	ipStr, err := utils.GetOutboundIP()
 	if err != nil {

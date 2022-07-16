@@ -4,6 +4,8 @@ type AppConf struct {
 	KafkaConf `ini:"kafka"`
 	//TaillogConf `ini:"taillog"`
 	EtcdConf `ini:"etcd"`
+
+	ES `ini:"es"`
 }
 
 type KafkaConf struct {
@@ -21,4 +23,8 @@ type EtcdConf struct {
 // -- unused ---
 type TaillogConf struct {
 	FileName string `ini:"filename"`
+}
+
+type ES struct {
+	Address string `ini:"address"`
 }

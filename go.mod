@@ -6,6 +6,7 @@ require (
 	github.com/Shopify/sarama v1.34.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/hpcloud/tail v1.0.0
+	github.com/olivere/elastic/v7 v7.0.32
 	go.etcd.io/etcd/api/v3 v3.5.4
 	go.etcd.io/etcd/client/v3 v3.5.4
 	gopkg.in/ini.v1 v1.66.6
@@ -33,7 +34,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.15.6 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/olivere/elastic/v7 v7.0.32 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect

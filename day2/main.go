@@ -464,7 +464,7 @@ func pB() {
 		fmt.Println(err)
 	}()
 	panic("wrong!!!")
-	fmt.Println("this is pB")
+	//fmt.Println("this is pB")
 }
 
 func pC() {

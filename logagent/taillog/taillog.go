@@ -69,7 +69,7 @@ func (t *TailTask) run() {
 			return
 		case line := <-t.instance.Lines: // get line of logs from tailObj
 			// 32. it to Kafka
-			fmt.Printf("got log data form %s successful, log:%v\n", t.path, t.topic)
+			fmt.Printf("got log data form %s successful, log:%v, line:%s\n", t.path, t.topic, line.Text)
 			kafka.SendToChan(t.topic, line.Text) // function call funct. good to set it async
 			// send log to a chan
 			// use single treahd obj
@@ -109,9 +109,5 @@ func testTail() {
 		}
 		fmt.Println("line:", line.Text)
 	}
-
-}
-
-func main() {
 
 }
